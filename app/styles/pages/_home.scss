@@ -1,0 +1,24 @@
+.barcode {
+    display: block;
+    flex: none;
+    overflow: hidden;
+    clear: both;
+    width: 350px;
+    height: 261px;
+    background: url(../../images/badge.png);
+    background-repeat: no-repeat;
+}
+
+@media 
+  (max-width: 768px) {
+    .barcode {
+        display: block;
+        flex: none;
+        overflow: hidden;
+        clear: both;
+        width: 250px;
+        height: 186px;
+        background: url(../../images/badge-small.png);
+        background-repeat: no-repeat;
+    }
+}

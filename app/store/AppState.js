@@ -121,6 +121,12 @@ class AppState {
       const { data } = await axios.get(`${url}/api/voter/${this.registrantId}`)
       if (data) {
         this.voter = data
+        if (!this.siteId) {
+          this.siteId = (this.voter.siteId) ? this.voter.siteId : ''
+          if (this.siteId) {
+            const site = await this.getSite()
+          }
+        }
       }
       retVal = data
     } catch (e) {

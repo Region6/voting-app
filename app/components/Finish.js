@@ -95,7 +95,7 @@ export default class Finish extends Component {
           </CardText>
           <CardActions>
             <RaisedButton
-              label="Logout"
+              label="Start Vote"
               primary
               onTouchTap={((...args) => this.navigate('/reset'))}
             />

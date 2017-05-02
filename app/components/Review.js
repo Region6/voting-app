@@ -88,11 +88,13 @@ export default class Review extends Component {
 
   goPrevious = () => {
     const { router } = this.context
-    if ('history' in router) {
-      router.history.goBack()
-    } else {
-      router.goBack()
-    }
+    setTimeout(() => {
+      if ('history' in router) {
+        router.history.goBack()
+      } else {
+        router.goBack()
+      }
+    }, 500)
   }
 
   navigate = (path) => {
@@ -122,10 +124,6 @@ export default class Review extends Component {
             }
           </CardText>
           <CardActions>
-            <RaisedButton
-              label="Previous" 
-              onTouchTap={((...args) => this.goPrevious(...args))}
-            />
             <RaisedButton
               primary
               label="Cast Vote(s)"

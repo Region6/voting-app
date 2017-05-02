@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import { observable } from 'mobx'
+import { observable, autorun } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { Flex, Box } from 'reflexbox'
 import {
@@ -35,9 +35,14 @@ export default class Site extends Component {
 
   componentWillMount() {
     const { store } = this.props
-    if (!store.site) {
-      this.setError()
-    }
+
+    autorun(() => {
+      if (!store.site) {
+        this.setError()
+      } else {
+        this.error = null
+      }
+    })
   }
 
   setError = () => {

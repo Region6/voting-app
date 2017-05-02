@@ -132,7 +132,7 @@ class AppState {
     } catch (e) {
       console.log(e)
       this.alreadyVoted = true
-      retVal = e
+      retVal = null
     }
     return retVal
   }
@@ -163,8 +163,9 @@ class AppState {
 
   @action async confirmRegistrant() {
     const registrant = await this.getRegistrant()
-    if (registrant.id) {
+    if (registrant && "id" in registrant) {
       this.voter = registrant
+      this.badgeData = null
     }
 
     return registrant
@@ -296,7 +297,6 @@ class AppState {
   @action reset() {
     this.voter = null
     this.companies = []
-    this.offices = []
     this.votes = []
     this.registrantId = ''
     this.pin = ''

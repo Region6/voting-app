@@ -34,6 +34,7 @@ export default class Faq extends Component {
   componentWillMount() {
     const { store } = this.props
     store.setExcludePage(true)
+    store.reset()
   }
 
   componentWillUnmount() {

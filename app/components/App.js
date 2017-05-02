@@ -217,7 +217,6 @@ export default class App extends Component {
                     path="/reset"
                     render={(state) => {
                       // seems ok ?
-                      store.reset()
                       return <Redirect 
                         to="/"
                       />

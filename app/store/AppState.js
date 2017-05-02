@@ -165,7 +165,6 @@ class AppState {
     const registrant = await this.getRegistrant()
     if (registrant && "id" in registrant) {
       this.voter = registrant
-      this.badgeData = null
     }
 
     return registrant

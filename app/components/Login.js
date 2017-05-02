@@ -119,8 +119,8 @@ export default class Login extends Component {
             </CardText>
             <CardActions>
               <RaisedButton
-                label="Start Over" 
-                onTouchTap={((...args) => this.navigate('/reset'))}
+                label="Start Over"
+                onTouchTap={((...args) => this.handleNavigate('/reset'))}
               />
               <RaisedButton
                 primary

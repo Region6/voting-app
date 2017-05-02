@@ -62,9 +62,9 @@ export default class App extends Component {
     console.log(store.registrantId.length)
     autorun(() => {
       if (store.registrantId && store.alreadyVoted) {
-        this.navigate('/invalid')
+        self.navigate('/invalid')
       } else if (store.voter) {
-        this.navigate('/site')
+        self.navigate('/site')
       }
     })
   }
@@ -127,7 +127,7 @@ export default class App extends Component {
 
   handleDone = () => {
     this.dialogOpen = false
-    this.navigate('/reset')
+    this.handleNavigate('/reset')
   }
 
   handleSerialDone = () => {
@@ -149,10 +149,19 @@ export default class App extends Component {
     const { store } = this.props
     this.dialogOpen = false
     store.reset()
-    this.navigate('/')
+    this.handleNavigate('/reset')
   }
 
   navigate = (path) => {
+    const { router } = this
+    if ('history' in router) {
+      router.history.push(path)
+    } else {
+      router.push(path)
+    }
+  }
+
+  handleNavigate = (path) => {
     const { router } = this.props
     if ('history' in router) {
       router.history.push(path)

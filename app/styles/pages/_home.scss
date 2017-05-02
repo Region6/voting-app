@@ -9,6 +9,13 @@
     background-repeat: no-repeat;
 }
 
+.mainContainer{ 
+    flex-grow: 1; 
+    overflow-y: auto;
+    height: 100%;
+    min-height: 0;
+}
+
 @media 
   (max-width: 768px) {
     .barcode {

@@ -6,6 +6,7 @@ import AppBar from 'material-ui/AppBar'
 import IconButton from 'material-ui/IconButton'
 import NavigationClose from 'material-ui/svg-icons/navigation/close'
 import ActionHelp from 'material-ui/svg-icons/action/help'
+import ActionSettings from 'material-ui/svg-icons/action/settings'
 import NavigationCancel from 'material-ui/svg-icons/navigation/cancel'
 import FlatButton from 'material-ui/FlatButton'
 import { Box } from 'reflexbox'
@@ -31,6 +32,11 @@ export default class TopBar extends Component {
 
   handleTitleTap = () => {
     this.navigate('/')
+  }
+
+  handleSettings = () => {
+    const { store } = this.props
+    store.serialDialogOpen = true
   }
 
   handleHelpTap = () => {
@@ -69,9 +75,13 @@ export default class TopBar extends Component {
     return (
       <Box col={12}>
         <AppBar
-          showMenuIconButton={false}
           title={<span style={styles.title}>Voting</span>}
           onTitleTouchTap={this.handleTitleTap}
+          iconElementLeft={
+            <IconButton onTouchTap={this.handleSettings}>
+              <ActionSettings />
+            </IconButton>
+          }
           iconElementRight={
             <IconButton onTouchTap={this.handleHelpTap}>
               {store.inFaq && <NavigationCancel />}

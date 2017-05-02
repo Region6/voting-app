@@ -1,16 +1,19 @@
 import React, { Component, PropTypes } from 'react'
-import { observable } from 'mobx'
+import { observable, autorun } from 'mobx'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { Route, Redirect, Switch } from 'react-router'
 import createBrowserHistory from 'history/createBrowserHistory'
 import { Provider, observer } from 'mobx-react'
-import LazyRoute from 'lazy-route'
 import DevTools from 'mobx-react-devtools'
 import { Flex, Box } from 'reflexbox'
 import IdleTimer from 'react-idle-timer'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
+import Toggle from 'material-ui/Toggle'
+import {List, ListItem} from 'material-ui/List'
+import Typography from './Typography'
 import ReactCountdownClock from 'react-countdown-clock'
+import Serialport from 'serialport'
 import Faq from './Faq'
 import Finish from './Finish'
 import Invalid from './Invalid'
@@ -26,18 +29,82 @@ import Type from './Type'
 import Voter from './Voter'
 
 const history = createBrowserHistory()
+const styles = {
+  container: {
+    height: '100%'
+  }
+}
 
 @observer
 export default class App extends Component {
   @observable idleTimer = null
   @observable router = null
   @observable dialogOpen = false
+  @observable port
+  @observable ports = []
 
   componentDidMount() {
-    //this.authenticate()
-    
+    const { store } = this.props
+    const self = this
+
+    this.listPorts()
+    autorun(() => {
+      if (store.port) {
+        self.port = new Serialport(
+          store.port,
+          {
+            parser: Serialport.parsers.readline('\n')
+          }
+        )
+        self.setupPort()
+      }
+    });
+    console.log(store.registrantId.length)
+    autorun(() => {
+      if (store.registrantId && store.alreadyVoted) {
+        this.navigate('/invalid')
+      } else if (store.voter) {
+        this.navigate('/site')
+      }
+    })
   }
-  
+
+  async setupPort() {
+    const { store } = this.props
+    const self = this
+
+    this.port.on(
+      'data',
+      (data) => {
+        store.badgeData = data.toString('ascii')
+      }
+    )
+  }
+
+  listPorts = () => {
+    const ports = [];
+
+    Serialport.list(
+      (error, results) => {
+        console.log('listPorts', error, results);
+        if (!error) {
+          results.forEach((result) => {
+            if (result.manufacturer) {
+              const name = (result.manufacturer) ? result.manufacturer : result.comName;
+              ports.push({ name, device: result.comName, pnpId: result.pnpId });
+            }
+          })
+          this.ports = ports
+        }
+      }
+    );
+  }
+
+  setPort = (port) => {
+    const { store } = this.props
+    store.port = port.device
+  }
+
   onActive = () => {
     console.log('activity detected')
     this.idleTimer.reset()
@@ -59,7 +126,17 @@ export default class App extends Component {
 
   handleDone = () => {
     this.dialogOpen = false
-    this.navigate("/reset")
+    this.navigate('/reset')
+  }
+
+  handleSerialDone = () => {
+    const { store } = this.props
+    store.serialDialogOpen = false
+  }
+
+  handleSerialCancel = () => {
+    const { store } = this.props
+    store.serialDialogOpen = false
   }
 
   handleMoreTime = () => {
@@ -97,6 +174,18 @@ export default class App extends Component {
         onTouchTap={this.handleMoreTime}
       />,
     ]
+    const serialActions = [
+      <FlatButton
+        label="Cancel"
+        onTouchTap={this.handleSerialCancel}
+      />,
+      <FlatButton
+        label="Select"
+        primary={true}
+        keyboardFocused={true}
+        onTouchTap={this.handleSerialDone}
+      />,
+    ]
     let timeoutSeconds = 30
 
     return (
@@ -107,7 +196,7 @@ export default class App extends Component {
         idleAction={this.onIdle}
         timeout={store.timeout}
         format="MM-DD-YYYY HH:MM:ss.SSS">
-        <div>
+        <div style={styles.container}>
           <Router
             history={history}
             ref={(router) => { this.router = router }}
@@ -115,6 +204,7 @@ export default class App extends Component {
             <Provider store={store}>
               <Flex
                 column
+                style={{ height: '100%', minHeight: 0 }}
               >
                 {/*<DevTools />*/}
                 <TopBar />
@@ -202,6 +292,27 @@ export default class App extends Component {
                 />
               </Box>
             </Flex>
+          </Dialog>
+          <Dialog
+            title="Barcode Scanners..."
+            actions={serialActions}
+            modal={false}
+            open={store.serialDialogOpen}
+            onRequestClose={this.handleSerialDone}
+          >
+            <List>
+              {this.ports.map((port) =>
+                <ListItem
+                  key={port.device} primaryText={port.name}
+                  rightToggle={
+                    <Toggle
+                      toggled={(port.device === store.port)}
+                      onToggle={((...args) => this.setPort(port, ...args))}
+                    />
+                  } 
+                />
+              )}
+            </List>
           </Dialog>
         </div>
       </IdleTimer>

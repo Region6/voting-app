@@ -64,6 +64,12 @@ export default class Sites extends Component {
       const { store } = this.props
       const { router } = this.context
       this.showAll()
+      store.setExcludePage(true)
+  }
+
+  componentWillUnmount() {
+    const { store } = this.props
+    store.setExcludePage(false)
   }
 
   handleChange = (field, event) => {

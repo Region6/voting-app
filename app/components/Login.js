@@ -68,7 +68,7 @@ export default class Login extends Component {
   checkIfComplete = () => {
     let retVal = false
     const { store } = this.props
-    if (store.registrantId.length > 0 && store.pin.length > 0) {
+    if (store.registrantId.length > 1) {
       retVal = true
     }
 
@@ -98,26 +98,18 @@ export default class Login extends Component {
         <Box col={12} lg={6} md={12} sm={12} p={1}>
           <Card>
             <CardText>
+              <Typography type={"title"}>
+                Scan your badge or enter your Registrant ID
+              </Typography>
               <TextField
                 autoFocus
                 fullWidth
                 id="registrantId"
                 floatingLabelText="Registrant ID"
-                hintText="Enter Registrant ID Here"
+                hintText="Enter Registrant ID"
                 value={store.registrantId}
                 onChange={((...args) => this.handleChange('registrantId', ...args))}
                 errorText={this.errorRegistrantId}
-              />
-              <br />
-              <TextField
-                fullWidth
-                id="pin"
-                floatingLabelText="Pin"
-                hintText="Enter PIN"
-                type="tel"
-                value={store.pin}
-                onChange={((...args) => this.handleChange('pin', ...args))}
-                errorText={this.errorPin}
               />
 
               <div

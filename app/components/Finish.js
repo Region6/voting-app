@@ -80,9 +80,12 @@ export default class Finish extends Component {
             subtitle="Thank you for voting"
           />
           <CardText>
+            <Typography type={"headline"}>
+              Your vote has been recorded. The voting app will reset in:
+            </Typography>
             <div style={{height: '350px'}}>
               <ReactCountdownClock 
-                seconds={25}
+                seconds={store.finishTimeout/1000}
                 color="#000"
                 alpha={0.9}
                 size={300}
@@ -90,6 +93,13 @@ export default class Finish extends Component {
               />
             </div>
           </CardText>
+          <CardActions>
+            <RaisedButton
+              label="Logout"
+              primary
+              onTouchTap={((...args) => this.navigate('/reset'))}
+            />
+          </CardActions>
         </Card>
       </Box>
     )

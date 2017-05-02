@@ -108,8 +108,8 @@ export default class Site extends Component {
           </CardText>
           <CardActions>
             <RaisedButton
-              label="Previous" 
-              onTouchTap={((...args) => this.goPrevious(...args))}
+              label="Previous"
+              onTouchTap={((...args) => this.navigate('/login', ...args))}
             />
             <RaisedButton
               primary

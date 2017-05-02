@@ -7,7 +7,13 @@ import webpack from 'webpack';
 import { dependencies as externals } from './app/package.json';
 
 export default {
-  externals: Object.keys(externals || {}),
+  externals: Object.assign(
+    {},
+    Object.keys(externals || {}),
+    {
+      serialport: 'serialport'
+    }
+  ),
 
   module: {
     rules: [{
@@ -16,7 +22,14 @@ export default {
       use: {
         loader: 'babel-loader',
         options: {
-          cacheDirectory: true
+          cacheDirectory: true,
+          plugins: [
+            'transform-decorators-legacy',
+            'transform-async-to-generator',
+            'transform-class-properties',
+            'transform-es2015-classes',
+          ],
+          presets: ['react', 'stage-0'],
         }
       }
     }]

@@ -37,7 +37,7 @@ export default class Invalid extends Component {
     const { store } = this.props
     store.setExcludePage(true)
 
-    setTimeout(() => this.navigate('/'), 25000)
+    setTimeout(() => this.navigate('/reset'), 15000)
   }
 
   componentWillUnmount() {
@@ -77,7 +77,7 @@ export default class Invalid extends Component {
             <Box col={12} p={1}>
               <Typography type={"headline"}>
                 {store.alreadyVoted &&
-                  <div>You have already voted</div>
+                  <div>You have already voted.</div>
                 }
                 {!store.isAfterStart() && !store.alreadyVoted &&
                   <div>Voting has not started yet</div>
@@ -88,6 +88,12 @@ export default class Invalid extends Component {
               </Typography>
               </Box>
           </CardText>
+          <CardActions>
+            <RaisedButton
+              label="Start Over" 
+              onTouchTap={((...args) => this.navigate('/reset'))}
+            />
+          </CardActions>
         </Card>
       </Box>
     )

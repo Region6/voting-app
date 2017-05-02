@@ -103,6 +103,12 @@ export default class States extends Component {
               </List>
             </Box>
           </CardText>
+          <CardActions>
+            <RaisedButton
+              label="Start Over"
+              onTouchTap={((...args) => this.navigate('/reset'))}
+            />
+          </CardActions>
         </Card>
       </Box>
     )

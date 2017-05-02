@@ -76,6 +76,7 @@ export default class App extends Component {
     this.port.on(
       'data',
       (data) => {
+        store.manualEntry = false
         store.badgeData = data.toString('ascii')
       }
     )
@@ -152,7 +153,7 @@ export default class App extends Component {
   }
 
   navigate = (path) => {
-    const { router } = this
+    const { router } = this.props
     if ('history' in router) {
       router.history.push(path)
     } else {

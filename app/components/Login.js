@@ -46,6 +46,7 @@ export default class Login extends Component {
 
   handleChange = (field, event) => {
     const { store } = this.props
+    store.manualEntry = true
     store.updateField(field, event.target.value)
   }
 
@@ -117,6 +118,10 @@ export default class Login extends Component {
               />
             </CardText>
             <CardActions>
+              <RaisedButton
+                label="Start Over" 
+                onTouchTap={((...args) => this.navigate('/reset'))}
+              />
               <RaisedButton
                 primary
                 disabled={!this.checkIfComplete()}

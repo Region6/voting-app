@@ -30,6 +30,7 @@ class AppState {
   @observable badgeData = ''
   @observable port = null
   @observable serialDialogOpen = false
+  @observable manualEntry = false
 
   constructor() {
     this.fetchOffices()
@@ -37,9 +38,11 @@ class AppState {
     this.finishTimeout = settings.finishTimeout || this.finishTimeout
     autorun(() => {
       console.log(this.badgeData)
-      this.registrantId = this.badgeData.split('|')[0]
-      if (this.registrantId && !this.voter) {
-        this.confirmRegistrant()
+      if (!this.manualEntry) {
+        this.registrantId = this.badgeData.split('|')[0]
+        if (this.registrantId && !this.voter) {
+          this.confirmRegistrant()
+        }
       }
     })
   }

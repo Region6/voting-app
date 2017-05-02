@@ -34,9 +34,11 @@ export default class TopBar extends Component {
     this.navigate('/')
   }
 
-  handleSettings = () => {
+  handleSettings() {
     const { store } = this.props
-    store.serialDialogOpen = true
+    store.listPorts(() => {
+      store.serialDialogOpen = true
+    })
   }
 
   handleHelpTap = () => {
@@ -78,7 +80,7 @@ export default class TopBar extends Component {
           title={<span style={styles.title}>Voting</span>}
           onTitleTouchTap={this.handleTitleTap}
           iconElementLeft={
-            <IconButton onTouchTap={this.handleSettings}>
+            <IconButton onTouchTap={((...args) => this.handleSettings(...args))}>
               <ActionSettings />
             </IconButton>
           }

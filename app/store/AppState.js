@@ -2,9 +2,16 @@ import { observable, action, autorun } from 'mobx'
 import axios from 'axios'
 import moment from 'moment'
 import uuid from 'uuid'
+import storedObservable from 'mobx-stored'
+import Serialport from 'serialport'
 import settings from '../../config'
 
 const url = settings.checkinServerUrl
+const defaultDb = {
+  scanner: {
+    port: null
+  }
+}
 
 class AppState {
   @observable authException = false
@@ -28,11 +35,15 @@ class AppState {
   @observable currentPath = 'General'
   @observable inFaq = false
   @observable badgeData = ''
-  @observable port = null
   @observable serialDialogOpen = false
   @observable manualEntry = false
+  @observable port
+  @observable ports = []
 
   constructor() {
+    const self = this
+
+    this.db = storedObservable('voting', defaultDb, 500)
     this.fetchOffices()
     this.timeout = settings.timeout || this.timeout
     this.finishTimeout = settings.finishTimeout || this.finishTimeout
@@ -45,6 +56,56 @@ class AppState {
         }
       }
     })
+
+    this.listPorts()
+    autorun(() => {
+      if (self.db.scanner.port) {
+        self.port = new Serialport(
+          self.db.scanner.port,
+          {
+            parser: Serialport.parsers.readline('\n')
+          }
+        )
+        self.setupPort()
+      }
+    })
+  }
+
+  @action setupPort() {
+    const self = this
+
+    self.port.on(
+      'data',
+      (data) => {
+        self.manualEntry = false
+        self.badgeData = data.toString('ascii')
+      }
+    )
+  }
+
+  @action listPorts = (cb) => {
+    const ports = []
+    const self = this
+
+    Serialport.list(
+      (error, results) => {
+        console.log('listPorts', error, results);
+        if (!error) {
+          results.forEach((result) => {
+            if (result.manufacturer) {
+              const name = (result.manufacturer) ? result.manufacturer : result.comName;
+              ports.push({ name, device: result.comName, pnpId: result.pnpId });
+            }
+          })
+          self.ports = ports
+          if (cb) cb()
+        }
+      }
+    )
+  }
+
+  @action setPort = (port) => {
+    this.db.scanner.port = port.device
   }
 
   @action async fetchOffices() {

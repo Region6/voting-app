@@ -13,7 +13,7 @@ import Toggle from 'material-ui/Toggle'
 import {List, ListItem} from 'material-ui/List'
 import Typography from './Typography'
 import ReactCountdownClock from 'react-countdown-clock'
-import Serialport from 'serialport'
+
 import Faq from './Faq'
 import Finish from './Finish'
 import Invalid from './Invalid'
@@ -47,19 +47,6 @@ export default class App extends Component {
     const { store } = this.props
     const self = this
 
-    this.listPorts()
-    autorun(() => {
-      if (store.port) {
-        self.port = new Serialport(
-          store.port,
-          {
-            parser: Serialport.parsers.readline('\n')
-          }
-        )
-        self.setupPort()
-      }
-    });
-    console.log(store.registrantId.length)
     autorun(() => {
       if (store.registrantId && store.alreadyVoted) {
         self.navigate('/invalid')
@@ -67,43 +54,6 @@ export default class App extends Component {
         self.navigate('/site')
       }
     })
-  }
-
-  async setupPort() {
-    const { store } = this.props
-    const self = this
-
-    this.port.on(
-      'data',
-      (data) => {
-        store.manualEntry = false
-        store.badgeData = data.toString('ascii')
-      }
-    )
-  }
-
-  listPorts = () => {
-    const ports = [];
-
-    Serialport.list(
-      (error, results) => {
-        console.log('listPorts', error, results);
-        if (!error) {
-          results.forEach((result) => {
-            if (result.manufacturer) {
-              const name = (result.manufacturer) ? result.manufacturer : result.comName;
-              ports.push({ name, device: result.comName, pnpId: result.pnpId });
-            }
-          })
-          this.ports = ports
-        }
-      }
-    );
-  }
-
-  setPort = (port) => {
-    const { store } = this.props
-    store.port = port.device
   }
 
   onActive = () => {
@@ -311,13 +261,13 @@ export default class App extends Component {
             onRequestClose={this.handleSerialDone}
           >
             <List>
-              {this.ports.map((port) =>
+              {store.ports.map((port) =>
                 <ListItem
                   key={port.device} primaryText={port.name}
                   rightToggle={
                     <Toggle
-                      toggled={(port.device === store.port)}
-                      onToggle={((...args) => this.setPort(port, ...args))}
+                      toggled={(port.device === store.db.scanner.port)}
+                      onToggle={((...args) => store.setPort(port, ...args))}
                     />
                   } 
                 />

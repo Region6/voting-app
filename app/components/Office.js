@@ -67,6 +67,10 @@ export default class Office extends Component {
     muiTheme: PropTypes.object.isRequired,
   };
 
+  componentDidMount() {
+    candidateSelected = null
+  }
+
   selectCandidate = (event, candidate) => {
     const { store, match } = this.props
     const office = store.offices[parseInt(match.params.id, 10)]
@@ -117,8 +121,10 @@ export default class Office extends Component {
     if (vote) {
       const idx = office.Candidates.findIndex(c => c.id == vote.candidateid)
       candidateSelected = office.Candidates[idx]
+    } else {
+      candidateSelected = null
     }
-    
+
     return (
       <Box col={12} p={1} className={cs.mainContainer}>
         <Card>

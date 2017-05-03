@@ -99,11 +99,13 @@ export default class Office extends Component {
 
   goPrevious = () => {
     const { router } = this.context
-    if ('history' in router) {
-      router.history.goBack()
-    } else {
-      router.goBack()
-    }
+    setTimeout(() => {
+      if ('history' in router) {
+        router.history.goBack()
+      } else {
+        router.goBack()
+      }
+    }, 500)
   }
 
   render() {

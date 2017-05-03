@@ -67,20 +67,24 @@ export default class Site extends Component {
 
   navigate = (path) => {
     const { router } = this.context
-    if ('history' in router) {
-      router.history.push(path)
-    } else {
-      router.push(path)
-    }
+    setTimeout(() => {
+      if ('history' in router) {
+        router.history.push(path)
+      } else {
+        router.push(path)
+      }
+    }, 500)
   }
 
   goPrevious = () => {
     const { router } = this.context
-    if ('history' in router) {
-      router.history.goBack()
-    } else {
-      router.goBack()
-    }
+    setTimeout(() => {
+      if ('history' in router) {
+        router.history.goBack()
+      } else {
+        router.goBack()
+      }
+    }, 500)
   }
 
   render() {
